@@ -1,5 +1,6 @@
 package de.hahnphilipp.littleminus;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
@@ -10,6 +11,7 @@ import androidx.fragment.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -54,7 +56,31 @@ public class QRFragment extends DialogFragment {
         updateQR(qrImageView);
     }
 
-    public void enableAllCoupons(Button enableAllCouponsButton) {
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        setFullBrightness(true);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        setFullBrightness(false);
+    }
+
+    private void setFullBrightness(boolean fullBrightness) {
+        WindowManager.LayoutParams layout = requireActivity().getWindow().getAttributes();
+        layout.screenBrightness = 1F * (fullBrightness ? 1 : -1);
+        requireActivity().getWindow().setAttributes(layout);
+
+        if(fullBrightness) {
+            requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        } else {
+            requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+    }
+
+    private void enableAllCoupons(Button enableAllCouponsButton) {
         enableAllCouponsButton.setEnabled(false);
         LoyaltyService.requestAllCouponsEnable(new LoyaltyService.RequestCouponEnableCallback() {
             @Override
