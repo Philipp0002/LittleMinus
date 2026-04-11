@@ -26,10 +26,10 @@
 
     <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:stretchColumns="0,1">
 
         <TableRow>
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -37,7 +37,20 @@
                 android:textAppearance="?attr/textAppearanceTitleMedium" />
 
             <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/paperreceiptswitch"/>
+                android:id="@+id/paperreceiptswitch" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/enable_all_coupons"
+                android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/couponsenableall"
+                android:text="@string/enable_all_coupons_action"
+                android:layout_width="wrap_content"/>
         </TableRow>
 
     </TableLayout>

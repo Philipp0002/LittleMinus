@@ -6,6 +6,7 @@ public class Constants {
     public static final String ENDPOINT_LOYALTY_ID = "/api/v1/DE/loyalty";
     public static final String BASE_COUPONS_API = "https://coupons.lidlplus.com";
     public static final String ENDPOINT_COUPONS_LIST = "/app/api/v3/promotionslist";
+    public static final String ENDPOINT_COUPONS_ENABLE = "/app/api/v2/promotions/%s/activation";
     public static final String BASE_AUTH_API = "https://accounts.lidl.com";
     public static final String ENDPOINT_AUTH = "/connect/authorize";
     public static final String ENDPOINT_TOKEN = "/connect/token";

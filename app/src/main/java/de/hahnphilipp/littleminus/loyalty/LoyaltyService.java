@@ -1,6 +1,7 @@
 package de.hahnphilipp.littleminus.loyalty;
 
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -11,8 +12,11 @@ import org.apache.hc.core5.net.URIBuilder;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import de.hahnphilipp.littleminus.auth.OkHttpAuthenticated;
 import de.hahnphilipp.littleminus.auth.TokenService;
@@ -20,6 +24,7 @@ import de.hahnphilipp.littleminus.shared.Constants;
 import de.hahnphilipp.littleminus.shared.Preferences;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -39,21 +44,58 @@ public class LoyaltyService {
         Preferences.putBoolean(Constants.PREF_PAPER_RECEIPT, enable);
     }
 
-    public static void requestCouponEnable(RequestCouponEnableCallback callback, boolean enable) {
+    public static void requestAllCouponsEnable(RequestCouponEnableCallback callback, boolean enable) {
+        requestCoupons(new RequestCouponsCallback() {
+            @Override
+            public void onSuccess(List<Coupon> couponList) {
+                final AtomicInteger counter = new AtomicInteger(couponList.size());
+                for(Coupon coupon : couponList) {
+                    if(coupon.isActivated != enable) {
+                        requestCouponEnable(coupon.id, new RequestCouponEnableCallback() {
+                            @Override
+                            public void onSuccess() {
+                                // ignore
+                                counter.decrementAndGet();
+                                if(counter.get() == 0) {
+                                    callback.onSuccess();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(String error) {
+                                callback.onFailure(error);
+                                counter.decrementAndGet();
+                            }
+                        }, enable);
+                    } else {
+                        counter.decrementAndGet();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(String error) {
+                callback.onFailure(error);
+            }
+        });
+
+    }
+
+    public static void requestCouponEnable(String id, RequestCouponEnableCallback callback, boolean enable) {
         OkHttpClient client = OkHttpAuthenticated.getAuthenticatedClient();
 
         try {
-            String uri = new URIBuilder(Constants.BASE_AUTH_API + Constants.ENDPOINT_AUTH)
-                    .addParameter("Country", "DE")
+            String uri = new URIBuilder(Constants.BASE_COUPONS_API + String.format(Constants.ENDPOINT_COUPONS_ENABLE, id))
                     .build()
                     .toString();
 
             Request.Builder requestBuilder = new Request.Builder()
                     .url(uri)
                     .addHeader("User-Agent", Constants.USER_AGENT)
-                    .addHeader("Authorization", "Bearer " + TokenService.getAccessToken());
+                    .addHeader("Authorization", "Bearer " + TokenService.getAccessToken())
+                    .addHeader("Country", "DE");
             if(enable) {
-                requestBuilder.post(RequestBody.create(new byte[0]));
+                requestBuilder.post(RequestBody.create(null, new byte[0]));
             } else {
                 requestBuilder.delete();
             }
@@ -72,6 +114,7 @@ public class LoyaltyService {
                         callback.onSuccess();
                     } else {
                         callback.onFailure("Failed to enable coupon: " + response.code());
+                        Log.e("LoyaltyService", "Failed to enable coupon: " + response.code() + " - " + response.message());
                     }
                 }
             });
@@ -150,6 +193,9 @@ public class LoyaltyService {
                             coupon.discountDescription = promotion.get("discount").get("description").asText();
                             coupon.discountScope = promotion.get("discount").get("scope").asText();
                             coupon.title = promotion.get("title").asText();
+                            coupon.isActivated = promotion.get("isActivated").asBoolean();
+                            coupon.validFrom = ZonedDateTime.parse(promotion.get("validity").get("start").asText());
+                            coupon.validUntil = ZonedDateTime.parse(promotion.get("validity").get("end").asText());
 
                             couponsList.add(coupon);
                         }
@@ -157,6 +203,7 @@ public class LoyaltyService {
 
                     callback.onSuccess(couponsList);
                 } catch (Throwable e) {
+                    e.printStackTrace();
                     callback.onFailure(e.getMessage());
                 }
             }
@@ -189,6 +236,9 @@ public class LoyaltyService {
         public String discountScope;
         public String title;
         public boolean isActivated;
+
+        public ZonedDateTime validFrom;
+        public ZonedDateTime validUntil;
 
     }
 }

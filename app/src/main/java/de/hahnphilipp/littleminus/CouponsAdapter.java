@@ -1,11 +1,15 @@
 package de.hahnphilipp.littleminus;
 
+import android.content.res.Resources;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -44,10 +48,13 @@ public class CouponsAdapter extends RecyclerView.Adapter<CouponsAdapter.CouponVi
     public void updateView(int indexPos, CouponViewHolder holder) {
         final LoyaltyService.Coupon item = objects.get(indexPos);
         holder.couponTitle.setText(item.title);
+        holder.couponDiscountTitle.setText(item.discountTitle);
+        holder.couponDiscountDescription.setText(item.discountDescription);
         Glide.with(LittleMinusApplication.context)
                 .load(item.image)
                 .centerInside()
                 .into(holder.couponImage);
+
     }
 
     @Override
@@ -57,15 +64,19 @@ public class CouponsAdapter extends RecyclerView.Adapter<CouponsAdapter.CouponVi
 
     public static class CouponViewHolder extends RecyclerView.ViewHolder {
 
-        public View mainView;
+        public CardView mainView;
         public ShapeableImageView couponImage;
         public TextView couponTitle;
+        public TextView couponDiscountTitle;
+        public TextView couponDiscountDescription;
 
         public CouponViewHolder(View itemView) {
             super(itemView);
-            mainView = itemView;
+            mainView = (CardView) itemView;
             couponTitle = itemView.findViewById(R.id.coupontitle);
             couponImage = itemView.findViewById(R.id.couponimage);
+            couponDiscountTitle = itemView.findViewById(R.id.coupondiscounttitle);
+            couponDiscountDescription = itemView.findViewById(R.id.coupondiscountdescription);
 
         }
     }

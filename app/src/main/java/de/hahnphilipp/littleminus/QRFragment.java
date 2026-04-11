@@ -1,21 +1,18 @@
 package de.hahnphilipp.littleminus;
 
-import android.app.Dialog;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
+import android.widget.Button;
 import android.widget.ImageView;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -47,12 +44,30 @@ public class QRFragment extends DialogFragment {
 
         ImageView qrImageView = view.findViewById(R.id.qrimage);
         MaterialSwitch paperReceiptSwitch = view.findViewById(R.id.paperreceiptswitch);
+        Button enableAllCouponsButton = view.findViewById(R.id.couponsenableall);
         paperReceiptSwitch.setChecked(LoyaltyService.isPaperReceiptEnabled());
         paperReceiptSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             LoyaltyService.enablePaperReceipt(isChecked);
             updateQR(qrImageView);
         });
+        enableAllCouponsButton.setOnClickListener(v -> enableAllCoupons((Button) v));
         updateQR(qrImageView);
+    }
+
+    public void enableAllCoupons(Button enableAllCouponsButton) {
+        enableAllCouponsButton.setEnabled(false);
+        LoyaltyService.requestAllCouponsEnable(new LoyaltyService.RequestCouponEnableCallback() {
+            @Override
+            public void onSuccess() {
+                // ignore
+                requireActivity().runOnUiThread(() -> enableAllCouponsButton.setEnabled(true));
+            }
+
+            @Override
+            public void onFailure(String error) {
+                requireActivity().runOnUiThread(() -> enableAllCouponsButton.setEnabled(true));
+            }
+        }, true);
     }
 
     public void updateQR(ImageView imageView) {
