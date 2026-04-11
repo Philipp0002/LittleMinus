@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">LittleMinus</string>
+    <string name="signing_in">Signing in...</string>
+    <string name="fetching_loyalty_id">Fetching loyalty id...</string>
+    <string name="switch_paper_receipt">Enable paper receipt?</string>
+    <string name="lidl_plus_card">Lidl Plus Card</string>
+
+</resources>
