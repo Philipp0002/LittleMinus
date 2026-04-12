@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import de.hahnphilipp.littleminus.auth.OkHttpAuthenticated;
 import de.hahnphilipp.littleminus.auth.TokenService;
+import de.hahnphilipp.littleminus.location.StoresService;
 import de.hahnphilipp.littleminus.shared.Constants;
 import de.hahnphilipp.littleminus.shared.Preferences;
 import okhttp3.Call;
@@ -94,7 +95,7 @@ public class LoyaltyService {
                     .url(uri)
                     .addHeader("User-Agent", Constants.USER_AGENT)
                     .addHeader("Authorization", "Bearer " + TokenService.getAccessToken())
-                    .addHeader("Country", "DE");
+                    .addHeader("Country", StoresService.getCountryId());
             if(enable) {
                 requestBuilder.post(RequestBody.create(null, new byte[0]));
             } else {
@@ -129,7 +130,7 @@ public class LoyaltyService {
 
         Request request = new Request.Builder()
                 .get()
-                .url(Constants.BASE_PROFILE_API + Constants.ENDPOINT_LOYALTY_ID)
+                .url(Constants.BASE_PROFILE_API + String.format(Constants.ENDPOINT_LOYALTY_ID, StoresService.getCountryId()))
                 .addHeader("User-Agent", Constants.USER_AGENT)
                 .addHeader("Authorization", "Bearer " + TokenService.getAccessToken())
                 .build();
@@ -163,7 +164,7 @@ public class LoyaltyService {
                 .get()
                 .url(Constants.BASE_COUPONS_API + Constants.ENDPOINT_COUPONS_LIST)
                 .addHeader("User-Agent", Constants.USER_AGENT)
-                .addHeader("Country", "DE")
+                .addHeader("Country", StoresService.getCountryId())
                 .addHeader("Authorization", "Bearer " + TokenService.getAccessToken())
                 .build();
 

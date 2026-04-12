@@ -11,13 +11,18 @@ import android.util.Log;
 
 import de.hahnphilipp.littleminus.auth.PKCEUtil;
 import de.hahnphilipp.littleminus.auth.TokenService;
+import de.hahnphilipp.littleminus.location.StoresService;
 import de.hahnphilipp.littleminus.loyalty.LoyaltyService;
 import de.hahnphilipp.littleminus.shared.Constants;
 
+import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
@@ -25,20 +30,24 @@ import org.apache.hc.core5.net.URIBuilder;
 
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Locale;
 
 public class LoginActivity extends AppCompatActivity {
 
     private WebView webView;
     private ViewAnimator viewAnimator;
     private TextView loadingTextView;
+    private TextView continueToLoginButton;
     private PKCEUtil.PKCEPair pkcePair;
+    private AutoCompleteTextView countryInput;
+    private List<StoresService.Country> countries;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(TokenService.getAccessToken() != null){
+        if (TokenService.getAccessToken() != null) {
             skipLogin();
             return;
         }
@@ -49,6 +58,8 @@ public class LoginActivity extends AppCompatActivity {
         Log.d("LOGIN_PKCE", "Verifier: " + pkcePair.codeVerifier);
         Log.d("LOGIN_PKCE", "Challenge: " + pkcePair.codeChallenge);
 
+        continueToLoginButton = findViewById(R.id.continuebutton);
+        countryInput = findViewById(R.id.countryinput);
         loadingTextView = findViewById(R.id.loadingtext);
         viewAnimator = findViewById(R.id.viewanimator);
         viewAnimator.setDisplayedChild(0);
@@ -66,35 +77,66 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         webView.getSettings().setJavaScriptEnabled(true);
-        openAuthURL();
+
+        countryInput.setOnItemClickListener(
+                (parent, view, position, id) -> {
+                    continueToLoginButton.setEnabled(true);
+                    StoresService.Country selectedCountry = countries.get(position);
+                    StoresService.setCountryId(selectedCountry.id);
+                }
+        );
+        continueToLoginButton.setOnClickListener(v -> openAuthURL());
+
+        requestCountries();
     }
+
+    private void requestCountries() {
+        StoresService.requestCountries(new StoresService.RequestCountriesCallback() {
+
+            @Override
+            public void onSuccess(List<StoresService.Country> countryList) {
+                countries = countryList;
+                String[] countriesArray = countryList.stream()
+                        .map(c -> c.defaultName + " (" + c.enDefaultName + ")")
+                        .toArray(String[]::new);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(LoginActivity.this,
+                        android.R.layout.simple_dropdown_item_1line, countriesArray);
+                runOnUiThread(() -> countryInput.setAdapter(adapter));
+            }
+
+            @Override
+            public void onFailure(String error) {
+
+            }
+        });
+    }
+
 
     public void requestToken(String code) {
         runOnUiThread(() -> {
-            viewAnimator.setDisplayedChild(1);
+            viewAnimator.setDisplayedChild(2);
             loadingTextView.setText(R.string.signing_in);
         });
 
         TokenService.requestTokenFromCode(code, pkcePair, new TokenService.TokenFromCodeCallback() {
-                    @Override
-                    public void onSuccess(String accessToken, String refreshToken) {
-                        Log.d("LOGIN_SUCC", "access_token: " + accessToken);
-                        Log.d("LOGIN_SUCC", "refresh_token: " + refreshToken);
-                        requestLoyaltyId();
-                    }
+            @Override
+            public void onSuccess(String accessToken, String refreshToken) {
+                Log.d("LOGIN_SUCC", "access_token: " + accessToken);
+                Log.d("LOGIN_SUCC", "refresh_token: " + refreshToken);
+                requestLoyaltyId();
+            }
 
-                    @Override
-                    public void onFailure(String error) {
-                        openAuthURL();
-                        runOnUiThread(() -> viewAnimator.setDisplayedChild(0));
-                    }
-                });
+            @Override
+            public void onFailure(String error) {
+                runOnUiThread(() -> viewAnimator.setDisplayedChild(0));
+            }
+        });
 
     }
 
     public void requestLoyaltyId() {
         runOnUiThread(() -> {
-            viewAnimator.setDisplayedChild(1);
+            viewAnimator.setDisplayedChild(2);
             loadingTextView.setText(R.string.fetching_loyalty_id);
         });
         LoyaltyService.requestLoyaltyId(new LoyaltyService.LoyaltyIdCallback() {
@@ -114,13 +156,14 @@ public class LoginActivity extends AppCompatActivity {
 
     private void openAuthURL() {
         try {
+            Locale currentLocale = getResources().getConfiguration().getLocales().get(0);
             String uri = new URIBuilder(Constants.BASE_AUTH_API + Constants.ENDPOINT_AUTH)
                     .addParameter("client_id", Constants.AUTH_CLIENT_ID)
                     .addParameter("redirect_uri", Constants.AUTH_REDIRECT_URI)
                     .addParameter("response_type", "code")
                     .addParameter("scope", Constants.AUTH_SCOPE)
-                    .addParameter("Country", "DE")
-                    .addParameter("language", "de-DE")
+                    .addParameter("Country", StoresService.getCountryId())
+                    .addParameter("language", currentLocale.toLanguageTag())
                     .addParameter("state", "12345")
                     .addParameter("nonce", "67890")
                     .addParameter("code_challenge", pkcePair.codeChallenge)
@@ -128,7 +171,10 @@ public class LoginActivity extends AppCompatActivity {
                     .build()
                     .toString();
 
-            runOnUiThread(() -> webView.loadUrl(uri));
+            runOnUiThread(() -> {
+                viewAnimator.setDisplayedChild(1);
+                webView.loadUrl(uri);
+            });
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }

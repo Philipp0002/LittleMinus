@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">LittleMinus</string>
+    <string name="select_country">Please select your country to proceed:</string>
+    <string name="continue_log_in">Continue to log in</string>
     <string name="signing_in">Signing in...</string>
     <string name="fetching_loyalty_id">Fetching loyalty id...</string>
     <string name="enable_all_coupons_action">Enable all coupons</string>
