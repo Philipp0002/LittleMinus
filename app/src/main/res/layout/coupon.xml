@@ -58,15 +58,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="Coupon Title"
-                android:textAppearance="?attr/textAppearanceTitleMedium" />
+                android:textAppearance="?attr/textAppearanceTitleMediumEmphasized" />
 
             <TextView
                 android:id="@+id/coupondiscountdescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Max. 5€ discount"
-                tools:textAppearance="?attr/textAppearanceBodyMedium"
+                tools:text="Max. 5€ discount"
+                tools:textAppearance="?attr/textAppearanceBodySmall"
                 android:textColor="?android:attr/textColorSecondary" />
 
             <TextView

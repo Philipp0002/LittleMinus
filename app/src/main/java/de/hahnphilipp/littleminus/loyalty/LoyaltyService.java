@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import de.hahnphilipp.littleminus.auth.OkHttpAuthenticated;
@@ -183,6 +184,7 @@ public class LoyaltyService {
                     node = node.get("sections");
 
                     for(JsonNode section : node) {
+                        String sectionTitle = section.get("name").asText();
                         for(JsonNode promotion : section.get("promotions")) {
                             Coupon coupon = new Coupon();
                             coupon.id = promotion.get("id").asText();
@@ -196,6 +198,7 @@ public class LoyaltyService {
                             coupon.isActivated = promotion.get("isActivated").asBoolean();
                             coupon.validFrom = ZonedDateTime.parse(promotion.get("validity").get("start").asText());
                             coupon.validUntil = ZonedDateTime.parse(promotion.get("validity").get("end").asText());
+                            coupon.section = sectionTitle;
 
                             couponsList.add(coupon);
                         }
@@ -237,8 +240,21 @@ public class LoyaltyService {
         public String title;
         public boolean isActivated;
 
+        public String section;
+
         public ZonedDateTime validFrom;
         public ZonedDateTime validUntil;
 
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            Coupon coupon = (Coupon) o;
+            return Objects.equals(id, coupon.id);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(id);
+        }
     }
 }

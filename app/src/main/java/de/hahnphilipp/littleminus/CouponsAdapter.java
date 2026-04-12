@@ -19,9 +19,9 @@ import java.util.ArrayList;
 
 import de.hahnphilipp.littleminus.loyalty.LoyaltyService;
 
-public class CouponsAdapter extends RecyclerView.Adapter<CouponsAdapter.CouponViewHolder> {
+public class CouponsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    public ArrayList<LoyaltyService.Coupon> objects;
+    public ArrayList<Object> objects;
 
     public CouponsAdapter() {
         objects = new ArrayList<>();
@@ -29,37 +29,68 @@ public class CouponsAdapter extends RecyclerView.Adapter<CouponsAdapter.CouponVi
 
     @NonNull
     @Override
-    public CouponViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.coupon, parent, false);
-        return new CouponViewHolder(v);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if(viewType == 1) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.coupon, parent, false);
+            return new CouponViewHolder(v);
+        } else {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_group_title, parent, false);
+            return new GroupTitleViewHolder(v);
+        }
     }
 
     @Override
-    public void onViewRecycled(@NonNull final CouponViewHolder holder) {
-        Glide.with(LittleMinusApplication.context).clear(holder.couponImage);
-        holder.couponImage.setImageDrawable(null);
+    public void onViewRecycled(@NonNull final RecyclerView.ViewHolder _holder) {
+        if(_holder instanceof CouponViewHolder holder) {
+            Glide.with(LittleMinusApplication.context).clear(holder.couponImage);
+            holder.couponImage.setImageDrawable(null);
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final CouponViewHolder holder, int position) {
-        updateView(position, holder);
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder _holder, int position) {
+        updateView(position, _holder);
     }
 
-    public void updateView(int indexPos, CouponViewHolder holder) {
-        final LoyaltyService.Coupon item = objects.get(indexPos);
-        holder.couponTitle.setText(item.title);
-        holder.couponDiscountTitle.setText(item.discountTitle);
-        holder.couponDiscountDescription.setText(item.discountDescription);
-        Glide.with(LittleMinusApplication.context)
-                .load(item.image)
-                .centerInside()
-                .into(holder.couponImage);
+    @Override
+    public int getItemViewType(int position) {
+        if(objects.get(position) instanceof LoyaltyService.Coupon) {
+            return 1;
+        }
+        return 0;
+    }
+
+    public void updateView(int indexPos, RecyclerView.ViewHolder _holder) {
+        if(_holder instanceof CouponViewHolder holder) {
+            final LoyaltyService.Coupon item = (LoyaltyService.Coupon) objects.get(indexPos);
+            holder.couponTitle.setText(item.title);
+            holder.couponDiscountTitle.setText(item.discountTitle);
+            holder.couponDiscountDescription.setText(item.discountDescription);
+            Glide.with(LittleMinusApplication.context)
+                    .load(item.image)
+                    .centerInside()
+                    .into(holder.couponImage);
+        } else {
+            final String title = (String) objects.get(indexPos);
+            GroupTitleViewHolder holder = (GroupTitleViewHolder) _holder;
+            holder.title.setText(title);
+        }
 
     }
 
     @Override
     public int getItemCount() {
         return objects.size();
+    }
+
+    public static class GroupTitleViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView title;
+
+        public GroupTitleViewHolder(View itemView) {
+            super(itemView);
+            title = (TextView) itemView;
+        }
     }
 
     public static class CouponViewHolder extends RecyclerView.ViewHolder {
@@ -77,7 +108,6 @@ public class CouponsAdapter extends RecyclerView.Adapter<CouponsAdapter.CouponVi
             couponImage = itemView.findViewById(R.id.couponimage);
             couponDiscountTitle = itemView.findViewById(R.id.coupondiscounttitle);
             couponDiscountDescription = itemView.findViewById(R.id.coupondiscountdescription);
-
         }
     }
 

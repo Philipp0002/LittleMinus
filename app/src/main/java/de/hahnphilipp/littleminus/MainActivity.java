@@ -1,40 +1,28 @@
 package de.hahnphilipp.littleminus;
 
-import android.annotation.SuppressLint;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.TextView;
-import android.widget.ViewAnimator;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.apache.hc.core5.net.URIBuilder;
-
-import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import de.hahnphilipp.littleminus.auth.PKCEUtil;
-import de.hahnphilipp.littleminus.auth.TokenService;
 import de.hahnphilipp.littleminus.loyalty.LoyaltyService;
-import de.hahnphilipp.littleminus.shared.Constants;
 
 public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton qrFab;
     private RecyclerView couponsRecycler;
     private CouponsAdapter couponsAdapter;
+
 
 
     @Override
@@ -58,9 +46,7 @@ public class MainActivity extends AppCompatActivity {
         LoyaltyService.requestCoupons(new LoyaltyService.RequestCouponsCallback() {
             @Override
             public void onSuccess(List<LoyaltyService.Coupon> couponList) {
-                couponsAdapter.objects.clear();
-                couponsAdapter.objects.addAll(couponList);
-                runOnUiThread(() -> couponsAdapter.notifyDataSetChanged());
+                showCoupons(couponList);
             }
 
             @Override
@@ -70,20 +56,26 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void showCoupons(List<LoyaltyService.Coupon> couponList) {
+        List<Object> result = couponList.stream()
+                .collect(Collectors.groupingBy(coupon -> coupon.section))
+                .entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .flatMap(entry -> Stream.concat(
+                        Stream.of(entry.getKey()),
+                        entry.getValue().stream()
+                ))
+                .toList();
+
+        couponsAdapter.objects.clear();
+        couponsAdapter.objects.addAll(result);
+        runOnUiThread(() -> couponsAdapter.notifyDataSetChanged());
+    }
+
     private void showQRFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         QRFragment newFragment = new QRFragment();
-
-        int screenWidth = getResources().getConfiguration().screenWidthDp;
-        if (Constants.LARGE_SCREEN_WIDTH_SIZE <= screenWidth) {
-            // The device is using a large layout, so show the fragment as a dialog
-            newFragment.show(fragmentManager, "qrDialog");
-        } else {
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            transaction.add(newFragment, "qrDialog")
-                    .addToBackStack(null).commit();
-        }
+        newFragment.show(fragmentManager, "qrDialog");
     }
 
 

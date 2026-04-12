@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -22,7 +25,12 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import de.hahnphilipp.littleminus.loyalty.LoyaltyService;
 
-public class QRFragment extends DialogFragment {
+public class QRFragment extends BottomSheetDialogFragment {
+
+    private MaterialButton paperReceiptEnableButton;
+    private MaterialButton paperReceiptDisableButton;
+    private Button enableAllCouponsButton;
+    private ImageView qrImageView;
 
     public QRFragment() {
         // Required empty public constructor
@@ -44,16 +52,25 @@ public class QRFragment extends DialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ImageView qrImageView = view.findViewById(R.id.qrimage);
-        MaterialSwitch paperReceiptSwitch = view.findViewById(R.id.paperreceiptswitch);
-        Button enableAllCouponsButton = view.findViewById(R.id.couponsenableall);
-        paperReceiptSwitch.setChecked(LoyaltyService.isPaperReceiptEnabled());
-        paperReceiptSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            LoyaltyService.enablePaperReceipt(isChecked);
+        paperReceiptEnableButton = view.findViewById(R.id.paperreceiptenable);
+        paperReceiptDisableButton = view.findViewById(R.id.paperreceiptdisable);
+        enableAllCouponsButton = view.findViewById(R.id.couponsenableall);
+        qrImageView = view.findViewById(R.id.qrimage);
+
+        paperReceiptEnableButton.setOnClickListener(v -> {
+            LoyaltyService.enablePaperReceipt(true);
             updateQR(qrImageView);
+            updatePaperReceiptButtons();
         });
-        enableAllCouponsButton.setOnClickListener(v -> enableAllCoupons((Button) v));
+        paperReceiptDisableButton.setOnClickListener(v -> {
+            LoyaltyService.enablePaperReceipt(false);
+            updateQR(qrImageView);
+            updatePaperReceiptButtons();
+        });
+        enableAllCouponsButton.setOnClickListener(v -> enableAllCoupons());
         updateQR(qrImageView);
+
+        updatePaperReceiptButtons();
     }
 
     @Override
@@ -68,6 +85,16 @@ public class QRFragment extends DialogFragment {
         setFullBrightness(false);
     }
 
+    private void updatePaperReceiptButtons() {
+        if(LoyaltyService.isPaperReceiptEnabled()) {
+            paperReceiptEnableButton.setChecked(true);
+            paperReceiptDisableButton.setChecked(false);
+        } else {
+            paperReceiptEnableButton.setChecked(false);
+            paperReceiptDisableButton.setChecked(true);
+        }
+    }
+
     private void setFullBrightness(boolean fullBrightness) {
         WindowManager.LayoutParams layout = requireActivity().getWindow().getAttributes();
         layout.screenBrightness = 1F * (fullBrightness ? 1 : -1);
@@ -80,7 +107,7 @@ public class QRFragment extends DialogFragment {
         }
     }
 
-    private void enableAllCoupons(Button enableAllCouponsButton) {
+    private void enableAllCoupons() {
         enableAllCouponsButton.setEnabled(false);
         LoyaltyService.requestAllCouponsEnable(new LoyaltyService.RequestCouponEnableCallback() {
             @Override
