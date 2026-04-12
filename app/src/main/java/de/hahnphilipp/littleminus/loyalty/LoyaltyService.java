@@ -24,6 +24,11 @@ import de.hahnphilipp.littleminus.auth.TokenService;
 import de.hahnphilipp.littleminus.location.StoresService;
 import de.hahnphilipp.littleminus.shared.Constants;
 import de.hahnphilipp.littleminus.shared.Preferences;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -51,14 +56,14 @@ public class LoyaltyService {
             @Override
             public void onSuccess(List<Coupon> couponList) {
                 final AtomicInteger counter = new AtomicInteger(couponList.size());
-                for(Coupon coupon : couponList) {
-                    if(coupon.isActivated != enable) {
-                        requestCouponEnable(coupon.id, new RequestCouponEnableCallback() {
+                for (Coupon coupon : couponList) {
+                    if (coupon.isActivated() != enable) {
+                        requestCouponEnable(coupon.getId(), new RequestCouponEnableCallback() {
                             @Override
                             public void onSuccess() {
                                 // ignore
                                 counter.decrementAndGet();
-                                if(counter.get() == 0) {
+                                if (counter.get() == 0) {
                                     callback.onSuccess();
                                 }
                             }
@@ -96,7 +101,7 @@ public class LoyaltyService {
                     .addHeader("User-Agent", Constants.USER_AGENT)
                     .addHeader("Authorization", "Bearer " + TokenService.getAccessToken())
                     .addHeader("Country", StoresService.getCountryId());
-            if(enable) {
+            if (enable) {
                 requestBuilder.post(RequestBody.create(null, new byte[0]));
             } else {
                 requestBuilder.delete();
@@ -184,22 +189,23 @@ public class LoyaltyService {
                     JsonNode node = mapper.readTree(json);
                     node = node.get("sections");
 
-                    for(JsonNode section : node) {
+                    for (JsonNode section : node) {
                         String sectionTitle = section.get("name").asText();
-                        for(JsonNode promotion : section.get("promotions")) {
-                            Coupon coupon = new Coupon();
-                            coupon.id = promotion.get("id").asText();
-                            coupon.promotionId = promotion.get("promotionId").asText();
-                            coupon.image = promotion.get("image").asText();
-                            coupon.type = promotion.get("type").asText();
-                            coupon.discountTitle = promotion.get("discount").get("title").asText();
-                            coupon.discountDescription = promotion.get("discount").get("description").asText();
-                            coupon.discountScope = promotion.get("discount").get("scope").asText();
-                            coupon.title = promotion.get("title").asText();
-                            coupon.isActivated = promotion.get("isActivated").asBoolean();
-                            coupon.validFrom = ZonedDateTime.parse(promotion.get("validity").get("start").asText());
-                            coupon.validUntil = ZonedDateTime.parse(promotion.get("validity").get("end").asText());
-                            coupon.section = sectionTitle;
+                        for (JsonNode promotion : section.get("promotions")) {
+                            Coupon coupon = new Coupon.CouponBuilder()
+                                    .id(promotion.get("id").asText())
+                                    .promotionId(promotion.get("promotionId").asText())
+                                    .image(promotion.get("image").asText())
+                                    .type(promotion.get("type").asText())
+                                    .discountTitle(promotion.get("discount").get("title").asText())
+                                    .discountDescription(promotion.get("discount").get("description").asText())
+                                    .discountScope(promotion.get("discount").get("scope").asText())
+                                    .title(promotion.get("title").asText())
+                                    .isActivated(promotion.get("isActivated").asBoolean())
+                                    .validFrom(ZonedDateTime.parse(promotion.get("validity").get("start").asText()))
+                                    .validUntil(ZonedDateTime.parse(promotion.get("validity").get("end").asText()))
+                                    .section(sectionTitle)
+                                    .build();
 
                             couponsList.add(coupon);
                         }
@@ -216,46 +222,21 @@ public class LoyaltyService {
 
     public interface LoyaltyIdCallback {
         void onSuccess(String loyaltyId);
+
         void onFailure(String error);
     }
 
     public interface RequestCouponsCallback {
         void onSuccess(List<Coupon> couponList);
+
         void onFailure(String error);
     }
 
     public interface RequestCouponEnableCallback {
         void onSuccess();
+
         void onFailure(String error);
     }
 
-    public static class Coupon {
-        public String id;
-        public String promotionId;
-        public String image;
-        public String type;
 
-        public String discountTitle;
-        public String discountDescription;
-        public String discountScope;
-        public String title;
-        public boolean isActivated;
-
-        public String section;
-
-        public ZonedDateTime validFrom;
-        public ZonedDateTime validUntil;
-
-        @Override
-        public boolean equals(Object o) {
-            if (o == null || getClass() != o.getClass()) return false;
-            Coupon coupon = (Coupon) o;
-            return Objects.equals(id, coupon.id);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hashCode(id);
-        }
-    }
 }

@@ -16,6 +16,7 @@ import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
 
+import de.hahnphilipp.littleminus.loyalty.Coupon;
 import de.hahnphilipp.littleminus.loyalty.LoyaltyService;
 
 public class CouponsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -55,7 +56,7 @@ public class CouponsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemViewType(int position) {
-        if(objects.get(position) instanceof LoyaltyService.Coupon) {
+        if(objects.get(position) instanceof Coupon) {
             return 1;
         }
         return 0;
@@ -63,19 +64,19 @@ public class CouponsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public void updateView(int indexPos, RecyclerView.ViewHolder _holder) {
         if(_holder instanceof CouponViewHolder holder) {
-            final LoyaltyService.Coupon item = (LoyaltyService.Coupon) objects.get(indexPos);
-            holder.couponTitle.setText(item.title);
-            holder.couponDiscountTitle.setText(item.discountTitle);
-            holder.couponDiscountDescription.setText(item.discountDescription);
+            final Coupon item = (Coupon) objects.get(indexPos);
+            holder.couponTitle.setText(item.getTitle());
+            holder.couponDiscountTitle.setText(item.getDiscountTitle());
+            holder.couponDiscountDescription.setText(item.getDiscountDescription());
             Glide.with(LittleMinusApplication.context)
-                    .load(item.image)
+                    .load(item.getImage())
                     .centerInside()
                     .into(holder.couponImage);
 
-            holder.mainView.setChecked(item.isActivated);
+            holder.mainView.setChecked(item.isActivated());
 
             holder.couponEnableButton.setText(
-                    item.isActivated ? R.string.disable_coupon_action : R.string.enable_coupon_action
+                    item.isActivated() ? R.string.disable_coupon_action : R.string.enable_coupon_action
             );
 
             holder.couponEnableButton.setOnClickListener(v -> couponClickListener.onCouponEnableButtonClick(item));
@@ -83,7 +84,7 @@ public class CouponsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             String relativeValidity = DateUtils.getRelativeTimeSpanString(
                     LittleMinusApplication.context,
-                    item.validUntil.toEpochSecond() * 1000,
+                    item.getValidUntil().toEpochSecond() * 1000,
                     false
             ).toString();
             holder.couponValidity.setText(relativeValidity);
@@ -136,8 +137,8 @@ public class CouponsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public static interface CouponClickListener {
-        void onCouponDetailButtonClick(LoyaltyService.Coupon coupon);
-        void onCouponEnableButtonClick(LoyaltyService.Coupon coupon);
+        void onCouponDetailButtonClick(Coupon coupon);
+        void onCouponEnableButtonClick(Coupon coupon);
     }
 
 }

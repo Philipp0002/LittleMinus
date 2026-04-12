@@ -30,7 +30,7 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.release
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -68,4 +68,6 @@ dependencies {
     implementation libs.zxing.android.embedded
     coreLibraryDesugaring libs.desugar.jdk.libs
     implementation libs.jackson.datatype.jsr310
+    compileOnly libs.lombok
+    annotationProcessor libs.lombok
 }

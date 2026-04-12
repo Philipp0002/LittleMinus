@@ -24,6 +24,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import de.hahnphilipp.littleminus.loyalty.Coupon;
 import de.hahnphilipp.littleminus.loyalty.LoyaltyService;
 
 public class CouponDetailFragment extends BottomSheetDialogFragment {
@@ -33,13 +34,13 @@ public class CouponDetailFragment extends BottomSheetDialogFragment {
     private TextView couponDiscountTitle;
     private TextView couponDiscountDescription;
 
-    private LoyaltyService.Coupon coupon;
+    private Coupon coupon;
 
     public CouponDetailFragment() {
         // Required empty public constructor
     }
 
-    static CouponDetailFragment newInstance(LoyaltyService.Coupon coupon) {
+    static CouponDetailFragment newInstance(Coupon coupon) {
         CouponDetailFragment f = new CouponDetailFragment();
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -83,7 +84,7 @@ public class CouponDetailFragment extends BottomSheetDialogFragment {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         try {
-            coupon = objectMapper.readValue(couponJson, LoyaltyService.Coupon.class);
+            coupon = objectMapper.readValue(couponJson, Coupon.class);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             dismiss();
@@ -95,13 +96,13 @@ public class CouponDetailFragment extends BottomSheetDialogFragment {
         couponDiscountTitle = view.findViewById(R.id.coupondiscounttitle);
         couponDiscountDescription = view.findViewById(R.id.coupondiscountdescription);
 
-        couponTitle.setText(coupon.title);
+        couponTitle.setText(coupon.getTitle());
         Glide.with(LittleMinusApplication.context)
-                .load(coupon.image)
+                .load(coupon.getImage())
                 .centerInside()
                 .into(couponImage);
-        couponDiscountTitle.setText(coupon.discountTitle);
-        couponDiscountDescription.setText(coupon.discountDescription);
+        couponDiscountTitle.setText(coupon.getDiscountTitle());
+        couponDiscountDescription.setText(coupon.getDiscountDescription());
     }
 
 }

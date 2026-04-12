@@ -1,5 +1,7 @@
 package de.hahnphilipp.littleminus.location;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -12,6 +14,10 @@ import java.util.List;
 
 import de.hahnphilipp.littleminus.shared.Constants;
 import de.hahnphilipp.littleminus.shared.Preferences;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -49,6 +55,7 @@ public class StoresService {
                 List<Country> countries;
                 try {
                     ObjectMapper objectMapper = new ObjectMapper();
+                    Log.e("AAAAAAA", "" + Country.class.getName());
                     countries = objectMapper.readValue(response.body().string(),
                             objectMapper.getTypeFactory().constructCollectionType(List.class, Country.class));
                 } catch (Throwable e) {
@@ -84,15 +91,16 @@ public class StoresService {
                     String json = response.body().string();
                     ObjectMapper objectMapper = new ObjectMapper();
                     JsonNode node = objectMapper.readTree(json);
-                    for(JsonNode storeNode : node) {
-                        Store store = new Store();
-                        store.storeKey = storeNode.get("storeKey").asText();
-                        store.name = storeNode.get("name").asText();
-                        store.address = storeNode.get("address").asText();
-                        store.postalCode = storeNode.get("postalCode").asText();
-                        store.locality = storeNode.get("locality").asText();
-                        store.latitude = storeNode.get("location").get("latitude").asDouble();
-                        store.longitude = storeNode.get("location").get("longitude").asDouble();
+                    for (JsonNode storeNode : node) {
+                        Store store = new Store.StoreBuilder()
+                                .storeKey(storeNode.get("storeKey").asText())
+                                .name(storeNode.get("name").asText())
+                                .address(storeNode.get("address").asText())
+                                .postalCode(storeNode.get("postalCode").asText())
+                                .locality(storeNode.get("locality").asText())
+                                .latitude(storeNode.get("location").get("latitude").asDouble())
+                                .longitude(storeNode.get("location").get("longitude").asDouble())
+                                .build();
                         stores.add(store);
                     }
                 } catch (Throwable e) {
@@ -106,29 +114,15 @@ public class StoresService {
 
     public interface RequestCountriesCallback {
         void onSuccess(List<Country> countryList);
+
         void onFailure(String error);
     }
 
     public interface RequestStoresCallback {
         void onSuccess(List<Store> storeList);
+
         void onFailure(String error);
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class Country {
-        public String id;
-        public String defaultName;
-        public String enDefaultName;
-    }
 
-    public static class Store {
-        public String storeKey;
-        public String name;
-        public String address;
-        public String postalCode;
-        public String locality;
-        public double latitude;
-        public double longitude;
-
-    }
 }

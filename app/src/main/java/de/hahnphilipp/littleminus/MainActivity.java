@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import de.hahnphilipp.littleminus.loyalty.Coupon;
 import de.hahnphilipp.littleminus.loyalty.LoyaltyService;
 
 public class MainActivity extends AppCompatActivity implements CouponsAdapter.CouponClickListener {
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements CouponsAdapter.Co
     public void loadCoupons() {
         LoyaltyService.requestCoupons(new LoyaltyService.RequestCouponsCallback() {
             @Override
-            public void onSuccess(List<LoyaltyService.Coupon> couponList) {
+            public void onSuccess(List<Coupon> couponList) {
                 showCoupons(couponList);
             }
 
@@ -55,9 +56,9 @@ public class MainActivity extends AppCompatActivity implements CouponsAdapter.Co
         });
     }
 
-    private void showCoupons(List<LoyaltyService.Coupon> couponList) {
+    private void showCoupons(List<Coupon> couponList) {
         List<Object> result = couponList.stream()
-                .collect(Collectors.groupingBy(coupon -> coupon.section))
+                .collect(Collectors.groupingBy(Coupon::getSection))
                 .entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .flatMap(entry -> Stream.concat(
@@ -79,18 +80,18 @@ public class MainActivity extends AppCompatActivity implements CouponsAdapter.Co
 
 
     @Override
-    public void onCouponDetailButtonClick(LoyaltyService.Coupon coupon) {
+    public void onCouponDetailButtonClick(Coupon coupon) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         CouponDetailFragment newFragment = CouponDetailFragment.newInstance(coupon);
         newFragment.show(fragmentManager, "couponDetailDialog");
     }
 
     @Override
-    public void onCouponEnableButtonClick(LoyaltyService.Coupon coupon) {
-        LoyaltyService.requestCouponEnable(coupon.id, new LoyaltyService.RequestCouponEnableCallback() {
+    public void onCouponEnableButtonClick(Coupon coupon) {
+        LoyaltyService.requestCouponEnable(coupon.getId(), new LoyaltyService.RequestCouponEnableCallback() {
             @Override
             public void onSuccess() {
-                coupon.isActivated = !coupon.isActivated;
+                coupon.setActivated(!coupon.isActivated());
                 int position = couponsAdapter.objects.indexOf(coupon);
                 runOnUiThread(() -> couponsAdapter.notifyItemChanged(position));
             }
@@ -99,6 +100,6 @@ public class MainActivity extends AppCompatActivity implements CouponsAdapter.Co
             public void onFailure(String error) {
 
             }
-        }, !coupon.isActivated);
+        }, !coupon.isActivated());
     }
 }

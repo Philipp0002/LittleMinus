@@ -11,6 +11,7 @@ import android.util.Log;
 
 import de.hahnphilipp.littleminus.auth.PKCEUtil;
 import de.hahnphilipp.littleminus.auth.TokenService;
+import de.hahnphilipp.littleminus.location.Country;
 import de.hahnphilipp.littleminus.location.StoresService;
 import de.hahnphilipp.littleminus.loyalty.LoyaltyService;
 import de.hahnphilipp.littleminus.shared.Constants;
@@ -40,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView continueToLoginButton;
     private PKCEUtil.PKCEPair pkcePair;
     private AutoCompleteTextView countryInput;
-    private List<StoresService.Country> countries;
+    private List<Country> countries;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -81,8 +82,8 @@ public class LoginActivity extends AppCompatActivity {
         countryInput.setOnItemClickListener(
                 (parent, view, position, id) -> {
                     continueToLoginButton.setEnabled(true);
-                    StoresService.Country selectedCountry = countries.get(position);
-                    StoresService.setCountryId(selectedCountry.id);
+                    Country selectedCountry = countries.get(position);
+                    StoresService.setCountryId(selectedCountry.getId());
                 }
         );
         continueToLoginButton.setOnClickListener(v -> openAuthURL());
@@ -92,12 +93,11 @@ public class LoginActivity extends AppCompatActivity {
 
     private void requestCountries() {
         StoresService.requestCountries(new StoresService.RequestCountriesCallback() {
-
             @Override
-            public void onSuccess(List<StoresService.Country> countryList) {
+            public void onSuccess(List<Country> countryList) {
                 countries = countryList;
                 String[] countriesArray = countryList.stream()
-                        .map(c -> c.defaultName + " (" + c.enDefaultName + ")")
+                        .map(c -> c.getDefaultName() + " (" + c.getEnDefaultName() + ")")
                         .toArray(String[]::new);
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(LoginActivity.this,
                         android.R.layout.simple_dropdown_item_1line, countriesArray);
