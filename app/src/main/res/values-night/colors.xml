@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorCouponEnabled">#A9D292</color>
+    <color name="colorOnCouponEnabled">#163808</color>
+    <color name="colorCouponEnabledContainer">#2C4F1D</color>
+    <color name="colorOnCouponEnabledContainer">#C4EFAC</color>
+    <color name="colorCouponDisabled">#FFB4A6</color>
+    <color name="colorOnCouponDisabled">#561E15</color>
+    <color name="colorCouponDisabledContainer">#733429</color>
+    <color name="colorOnCouponDisabledContainer">#FFDAD4</color>
+</resources>

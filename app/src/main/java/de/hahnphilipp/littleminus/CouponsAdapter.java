@@ -13,6 +13,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
@@ -70,6 +71,8 @@ public class CouponsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     .load(item.image)
                     .centerInside()
                     .into(holder.couponImage);
+
+            holder.mainView.setChecked(item.isActivated);
         } else {
             final String title = (String) objects.get(indexPos);
             GroupTitleViewHolder holder = (GroupTitleViewHolder) _holder;
@@ -95,7 +98,7 @@ public class CouponsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public static class CouponViewHolder extends RecyclerView.ViewHolder {
 
-        public CardView mainView;
+        public MaterialCardView mainView;
         public ShapeableImageView couponImage;
         public TextView couponTitle;
         public TextView couponDiscountTitle;
@@ -103,7 +106,7 @@ public class CouponsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         public CouponViewHolder(View itemView) {
             super(itemView);
-            mainView = (CardView) itemView;
+            mainView = (MaterialCardView) itemView;
             couponTitle = itemView.findViewById(R.id.coupontitle);
             couponImage = itemView.findViewById(R.id.couponimage);
             couponDiscountTitle = itemView.findViewById(R.id.coupondiscounttitle);

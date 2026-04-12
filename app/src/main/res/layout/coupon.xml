@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="?attr/materialCardViewFilledStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="8dp"
-    android:background="?attr/colorPrimaryContainer"
-    app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Medium">
+    app:cardBackgroundColor="@color/coupon_card_background"
+    app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Medium"
+    android:checkable="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:duplicateParentState="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="150dp"
@@ -50,7 +53,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:duplicateParentState="true">
 
             <!-- Title, secondary and supporting text -->
             <TextView
@@ -58,7 +62,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="Coupon Title"
-                android:textAppearance="?attr/textAppearanceTitleMediumEmphasized" />
+                android:textAppearance="?attr/textAppearanceTitleMediumEmphasized"
+                android:duplicateParentState="true"
+                android:textColor="@color/coupon_card_text" />
 
             <TextView
                 android:id="@+id/coupondiscountdescription"
@@ -67,7 +73,8 @@
                 android:layout_marginTop="8dp"
                 tools:text="Max. 5€ discount"
                 tools:textAppearance="?attr/textAppearanceBodySmall"
-                android:textColor="?android:attr/textColorSecondary" />
+                android:textColor="?android:attr/textColorSecondary"
+                android:duplicateParentState="true" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -75,7 +82,8 @@
                 android:layout_marginTop="16dp"
                 tools:text="TEST"
                 android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="?android:attr/textColorSecondary" />
+                android:textColor="?android:attr/textColorSecondary"
+                android:duplicateParentState="true" />
 
         </LinearLayout>
 

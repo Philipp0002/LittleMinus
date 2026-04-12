@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="colorCouponEnabled" format="color" />
+    <attr name="colorOnCouponEnabled" format="color" />
+    <attr name="colorCouponEnabledContainer" format="color" />
+    <attr name="colorOnCouponEnabledContainer" format="color" />
+    <attr name="colorCouponDisabled" format="color" />
+    <attr name="colorOnCouponDisabled" format="color" />
+    <attr name="colorCouponDisabledContainer" format="color" />
+    <attr name="colorOnCouponDisabledContainer" format="color" />
+</resources>

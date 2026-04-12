@@ -4,6 +4,14 @@
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="android:fontFamily">@font/figtree</item>
+        <item name="colorCouponEnabled">@color/colorCouponEnabled</item>
+        <item name="colorOnCouponEnabled">@color/colorOnCouponEnabled</item>
+        <item name="colorCouponEnabledContainer">@color/colorCouponEnabledContainer</item>
+        <item name="colorOnCouponEnabledContainer">@color/colorOnCouponEnabledContainer</item>
+        <item name="colorCouponDisabled">@color/colorCouponDisabled</item>
+        <item name="colorOnCouponDisabled">@color/colorOnCouponDisabled</item>
+        <item name="colorCouponDisabledContainer">@color/colorCouponDisabledContainer</item>
+        <item name="colorOnCouponDisabledContainer">@color/colorOnCouponDisabledContainer</item>
     </style>
 
     <style name="Theme.LittleMinus" parent="Base.Theme.LittleMinus" />
