@@ -114,11 +114,13 @@ public class QRFragment extends BottomSheetDialogFragment {
             public void onSuccess() {
                 // ignore
                 requireActivity().runOnUiThread(() -> enableAllCouponsButton.setEnabled(true));
+                ((MainActivity)requireActivity()).loadCoupons();
             }
 
             @Override
             public void onFailure(String error) {
                 requireActivity().runOnUiThread(() -> enableAllCouponsButton.setEnabled(true));
+                ((MainActivity)requireActivity()).loadCoupons();
             }
         }, true);
     }

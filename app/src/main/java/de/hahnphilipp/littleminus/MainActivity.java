@@ -17,12 +17,11 @@ import java.util.stream.Stream;
 
 import de.hahnphilipp.littleminus.loyalty.LoyaltyService;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CouponsAdapter.CouponClickListener {
 
     private FloatingActionButton qrFab;
     private RecyclerView couponsRecycler;
     private CouponsAdapter couponsAdapter;
-
 
 
     @Override
@@ -35,14 +34,14 @@ public class MainActivity extends AppCompatActivity {
         qrFab.setOnClickListener(v -> showQRFragment());
 
         couponsRecycler = findViewById(R.id.couponsrecycler);
-        couponsAdapter = new CouponsAdapter();
+        couponsAdapter = new CouponsAdapter(this);
         couponsRecycler.setLayoutManager(new LinearLayoutManager(this));
         couponsRecycler.setAdapter(couponsAdapter);
 
         loadCoupons();
     }
 
-    private void loadCoupons() {
+    public void loadCoupons() {
         LoyaltyService.requestCoupons(new LoyaltyService.RequestCouponsCallback() {
             @Override
             public void onSuccess(List<LoyaltyService.Coupon> couponList) {
@@ -79,4 +78,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onCouponDetailButtonClick(LoyaltyService.Coupon coupon) {
+
+    }
+
+    @Override
+    public void onCouponEnableButtonClick(LoyaltyService.Coupon coupon) {
+        LoyaltyService.requestCouponEnable(coupon.id, new LoyaltyService.RequestCouponEnableCallback() {
+            @Override
+            public void onSuccess() {
+                coupon.isActivated = !coupon.isActivated;
+                int position = couponsAdapter.objects.indexOf(coupon);
+                runOnUiThread(() -> couponsAdapter.notifyItemChanged(position));
+            }
+
+            @Override
+            public void onFailure(String error) {
+
+            }
+        }, !coupon.isActivated);
+    }
 }

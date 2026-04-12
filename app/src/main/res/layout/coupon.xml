@@ -77,14 +77,49 @@
                 android:duplicateParentState="true" />
 
             <TextView
+                android:id="@+id/couponvalidity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="4dp"
                 tools:text="TEST"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
+                tools:textAppearance="?attr/textAppearanceBodySmall"
                 android:textColor="?android:attr/textColorSecondary"
                 android:duplicateParentState="true" />
 
+            <com.google.android.material.button.MaterialButtonGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:paddingBottom="8dp"
+                android:duplicateParentState="true"
+                style="@style/Widget.Material3Expressive.MaterialButtonGroup.Connected">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/couponenablebutton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/enable_coupon_action"
+                app:backgroundTint="@color/coupon_card_text"
+                android:enabled="false"
+                android:textColor="@color/coupon_card_background"
+                android:duplicateParentState="true"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/coupondetailbutton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/coupon_details"
+                android:enabled="false"
+                app:icon="@drawable/info"
+                app:backgroundTint="@color/coupon_card_text"
+                android:textColor="@color/coupon_card_background"
+                app:iconTint="@color/coupon_card_background"
+                app:iconGravity="textStart"
+                android:duplicateParentState="true"/>
+
+            </com.google.android.material.button.MaterialButtonGroup>
         </LinearLayout>
 
     </LinearLayout>

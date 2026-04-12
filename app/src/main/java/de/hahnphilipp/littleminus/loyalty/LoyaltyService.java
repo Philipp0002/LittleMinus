@@ -112,7 +112,7 @@ public class LoyaltyService {
 
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) {
-                    if (response.isSuccessful()) {
+                    if (response.isSuccessful() || response.code() == 412) {
                         callback.onSuccess();
                     } else {
                         callback.onFailure("Failed to enable coupon: " + response.code());

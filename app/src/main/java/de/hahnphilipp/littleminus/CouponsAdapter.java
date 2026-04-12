@@ -1,18 +1,16 @@
 package de.hahnphilipp.littleminus;
 
-import android.content.res.Resources;
-import android.util.TypedValue;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.imageview.ShapeableImageView;
 
@@ -23,9 +21,11 @@ import de.hahnphilipp.littleminus.loyalty.LoyaltyService;
 public class CouponsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public ArrayList<Object> objects;
+    private CouponClickListener couponClickListener;
 
-    public CouponsAdapter() {
+    public CouponsAdapter(CouponClickListener couponClickListener) {
         objects = new ArrayList<>();
+        this.couponClickListener = couponClickListener;
     }
 
     @NonNull
@@ -73,6 +73,21 @@ public class CouponsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     .into(holder.couponImage);
 
             holder.mainView.setChecked(item.isActivated);
+
+            holder.couponEnableButton.setText(
+                    item.isActivated ? R.string.disable_coupon_action : R.string.enable_coupon_action
+            );
+
+            holder.couponEnableButton.setOnClickListener(v -> couponClickListener.onCouponEnableButtonClick(item));
+            holder.couponDetailButton.setOnClickListener(v -> couponClickListener.onCouponDetailButtonClick(item));
+
+            String relativeValidity = DateUtils.getRelativeTimeSpanString(
+                    LittleMinusApplication.context,
+                    item.validUntil.toEpochSecond() * 1000,
+                    false
+            ).toString();
+            holder.couponValidity.setText(relativeValidity);
+
         } else {
             final String title = (String) objects.get(indexPos);
             GroupTitleViewHolder holder = (GroupTitleViewHolder) _holder;
@@ -103,6 +118,9 @@ public class CouponsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public TextView couponTitle;
         public TextView couponDiscountTitle;
         public TextView couponDiscountDescription;
+        public TextView couponValidity;
+        public MaterialButton couponEnableButton;
+        public MaterialButton couponDetailButton;
 
         public CouponViewHolder(View itemView) {
             super(itemView);
@@ -111,7 +129,15 @@ public class CouponsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             couponImage = itemView.findViewById(R.id.couponimage);
             couponDiscountTitle = itemView.findViewById(R.id.coupondiscounttitle);
             couponDiscountDescription = itemView.findViewById(R.id.coupondiscountdescription);
+            couponValidity = itemView.findViewById(R.id.couponvalidity);
+            couponEnableButton = itemView.findViewById(R.id.couponenablebutton);
+            couponDetailButton = itemView.findViewById(R.id.coupondetailbutton);
         }
+    }
+
+    public static interface CouponClickListener {
+        void onCouponDetailButtonClick(LoyaltyService.Coupon coupon);
+        void onCouponEnableButtonClick(LoyaltyService.Coupon coupon);
     }
 
 }
