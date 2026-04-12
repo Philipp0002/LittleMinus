@@ -39,11 +39,9 @@ jobs:
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
 
       - name: Upload Release APK as GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         if: github.ref == 'refs/heads/master'
         with:
           tag_name: "release-${{ github.run_number }}"
           name: "Release #${{ github.run_number }}"
           files: app/build/outputs/apk/release/app-release.apk
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
