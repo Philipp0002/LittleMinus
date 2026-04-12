@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".QRFragment"
+    android:gravity="center_horizontal"
+    android:paddingBottom="16dp">
+
+
+
+    <com.google.android.material.imageview.ShapeableImageView
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/couponimage"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:scaleType="centerCrop"
+        tools:src="@mipmap/ic_launcher"
+        android:layout_gravity="center"
+        app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Medium"/>
+
+
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+        android:id="@+id/drag_handle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="?attr/colorSecondaryContainer"
+        app:cardCornerRadius="32dp"
+        app:layout_constraintBottom_toBottomOf="@+id/couponimage"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/coupondiscounttitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:textAppearance="?attr/textAppearanceHeadlineLargeEmphasized"
+            android:textStyle="bold"
+            tools:text="-5%" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        app:layout_constraintTop_toBottomOf="@id/couponimage"
+        android:id="@+id/coupontitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Coupon title"
+        android:textAlignment="center"
+        android:textAppearance="?attr/textAppearanceHeadlineSmall"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="32dp"/>
+
+    <TextView
+        app:layout_constraintTop_toBottomOf="@id/coupontitle"
+        android:id="@+id/coupondiscountdescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Coupon discount description"
+        android:textAlignment="center"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="32dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

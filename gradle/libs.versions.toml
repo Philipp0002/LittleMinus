@@ -1,8 +1,10 @@
 [versions]
 agp = "8.13.2"
+desugar_jdk_libs = "2.1.5"
 glide = "4.16.0"
 httpclient5 = "5.6"
 jacksonDatabind = "2.21.2"
+jacksonDatatypeJsr310 = "2.21.2"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
@@ -15,9 +17,11 @@ okhttp = "5.3.2"
 zxingAndroidEmbedded = "4.3.0"
 
 [libraries]
+desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 httpclient5 = { module = "org.apache.httpcomponents.client5:httpclient5", version.ref = "httpclient5" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jacksonDatabind" }
+jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jacksonDatatypeJsr310" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

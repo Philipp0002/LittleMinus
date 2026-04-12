@@ -80,7 +80,9 @@ public class MainActivity extends AppCompatActivity implements CouponsAdapter.Co
 
     @Override
     public void onCouponDetailButtonClick(LoyaltyService.Coupon coupon) {
-
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        CouponDetailFragment newFragment = CouponDetailFragment.newInstance(coupon);
+        newFragment.show(fragmentManager, "couponDetailDialog");
     }
 
     @Override
