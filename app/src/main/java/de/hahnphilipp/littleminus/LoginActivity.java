@@ -78,6 +78,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setDomStorageEnabled(true);
 
         countryInput.setOnItemClickListener(
                 (parent, view, position, id) -> {
@@ -155,6 +156,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void openAuthURL() {
+        WebView.setWebContentsDebuggingEnabled(true);
         try {
             Locale currentLocale = getResources().getConfiguration().getLocales().get(0);
             String uri = new URIBuilder(Constants.BASE_AUTH_API + Constants.ENDPOINT_AUTH)
@@ -173,6 +175,7 @@ public class LoginActivity extends AppCompatActivity {
 
             runOnUiThread(() -> {
                 viewAnimator.setDisplayedChild(1);
+                Log.d("LOGIN_URL", "Auth URL: " + uri);
                 webView.loadUrl(uri);
             });
         } catch (URISyntaxException e) {

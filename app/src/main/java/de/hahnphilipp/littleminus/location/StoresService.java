@@ -55,7 +55,6 @@ public class StoresService {
                 List<Country> countries;
                 try {
                     ObjectMapper objectMapper = new ObjectMapper();
-                    Log.e("AAAAAAA", "" + Country.class.getName());
                     countries = objectMapper.readValue(response.body().string(),
                             objectMapper.getTypeFactory().constructCollectionType(List.class, Country.class));
                 } catch (Throwable e) {
