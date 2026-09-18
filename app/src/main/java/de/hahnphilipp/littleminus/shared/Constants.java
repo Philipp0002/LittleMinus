@@ -26,6 +26,8 @@ public class Constants {
     public static final String PREF_ACCESS_TOKEN = "access_token";
     public static final String PREF_REFRESH_TOKEN = "refresh_token";
     public static final String PREF_COUNTRY_ID = "country";
+    public static final String PREF_SELECTED_STORE_KEY = "store_selected_key";
+    public static final String PREF_SELECTED_STORE_NAME = "store_selected_name";
 
 
     public static final int LARGE_SCREEN_WIDTH_SIZE = 1150;

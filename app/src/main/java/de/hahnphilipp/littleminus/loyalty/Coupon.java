@@ -32,6 +32,7 @@ public class Coupon {
 
     private ZonedDateTime validFrom;
     private ZonedDateTime validUntil;
+    private String[] stores;
 
     @Override
     public boolean equals(Object o) {

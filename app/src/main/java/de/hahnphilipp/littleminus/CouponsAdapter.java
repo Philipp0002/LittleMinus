@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import de.hahnphilipp.littleminus.loyalty.Coupon;
 import de.hahnphilipp.littleminus.loyalty.LoyaltyService;
+import de.hahnphilipp.littleminus.utils.GroupTitleViewHolder;
 
 public class CouponsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -100,16 +101,6 @@ public class CouponsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public int getItemCount() {
         return objects.size();
-    }
-
-    public static class GroupTitleViewHolder extends RecyclerView.ViewHolder {
-
-        public TextView title;
-
-        public GroupTitleViewHolder(View itemView) {
-            super(itemView);
-            title = (TextView) itemView;
-        }
     }
 
     public static class CouponViewHolder extends RecyclerView.ViewHolder {

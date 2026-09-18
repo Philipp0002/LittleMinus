@@ -204,6 +204,7 @@ public class LoyaltyService {
                                     .isActivated(promotion.get("isActivated").asBoolean())
                                     .validFrom(ZonedDateTime.parse(promotion.get("validity").get("start").asText()))
                                     .validUntil(ZonedDateTime.parse(promotion.get("validity").get("end").asText()))
+                                    .stores(mapper.convertValue(promotion.get("stores"), String[].class))
                                     .section(sectionTitle)
                                     .build();
 

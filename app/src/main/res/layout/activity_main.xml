@@ -24,12 +24,32 @@
         </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/couponsfilter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+        android:layout_marginHorizontal="8dp">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/couponsfilterStore"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/filter_store_chip"
+            android:checkable="false"
+            app:chipIcon="@drawable/store"
+            app:chipIconVisible="true"/>
+
+    </com.google.android.material.chip.ChipGroup>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/couponsrecycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/couponsfilter"
+        tools:listitem="@layout/coupon"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/qrfab"

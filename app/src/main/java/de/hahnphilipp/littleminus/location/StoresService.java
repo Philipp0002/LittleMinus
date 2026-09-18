@@ -1,10 +1,10 @@
 package de.hahnphilipp.littleminus.location;
 
 import android.util.Log;
+import android.util.Pair;
 
 import androidx.annotation.NonNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -14,10 +14,6 @@ import java.util.List;
 
 import de.hahnphilipp.littleminus.shared.Constants;
 import de.hahnphilipp.littleminus.shared.Preferences;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -25,6 +21,18 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class StoresService {
+
+    public static void setSelectedStore(String storeKey, String storeName) {
+        Preferences.putString(Constants.PREF_SELECTED_STORE_KEY, storeKey);
+        Preferences.putString(Constants.PREF_SELECTED_STORE_NAME, storeName);
+    }
+
+    public static Pair<String, String> getSelectedStore() {
+        return new Pair<>(
+                Preferences.getString(Constants.PREF_SELECTED_STORE_KEY, null),
+                Preferences.getString(Constants.PREF_SELECTED_STORE_NAME, null)
+        );
+    }
 
     public static void setCountryId(String countryId) {
         Preferences.putString(Constants.PREF_COUNTRY_ID, countryId);
@@ -76,6 +84,7 @@ public class StoresService {
                 .addHeader("User-Agent", Constants.USER_AGENT)
                 .build();
 
+        Log.d("StoresService", request.url().toString());
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -96,7 +105,7 @@ public class StoresService {
                                 .name(storeNode.get("name").asText())
                                 .address(storeNode.get("address").asText())
                                 .postalCode(storeNode.get("postalCode").asText())
-                                .locality(storeNode.get("locality").asText())
+                                .locality(storeNode.has("locality") ? storeNode.get("locality").asText() : "")
                                 .latitude(storeNode.get("location").get("latitude").asDouble())
                                 .longitude(storeNode.get("location").get("longitude").asDouble())
                                 .build();
